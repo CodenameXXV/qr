@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Генератор з Логотипом</title>
+    <script type="text/javascript" src="https://unpkg.com/qr-code-styling@1.5.0/lib/qr-code-styling.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #8b5cf6;
+            --primary-hover: #7c3aed;
+            --bg-color: #0f172a;
+            --card-bg: rgba(30, 41, 59, 0.7);
+            --text-color: #f8fafc;
+            --border-color: rgba(255, 255, 255, 0.1);
+            --input-bg: rgba(15, 23, 42, 0.6);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #1e1b4b 0%, #0f172a 100%);
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            background: var(--card-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--border-color);
+            border-radius: 24px;
+            padding: 2rem;
+            width: 100%;
+            max-width: 800px; /* Трохи ширше для двоколонкового дизайну */
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            display: flex;
+            gap: 2rem;
+            flex-wrap: wrap;
+        }
+
+        /* Колонка налаштувань */
+        .controls {
+            flex: 1;
+            min-width: 280px;
+        }
+
+        /* Колонка попереднього перегляду */
+        .preview {
+            flex: 1;
+            min-width: 280px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border-left: 1px solid var(--border-color);
+            padding-left: 2rem;
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            font-weight: 800;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(to right, #a78bfa, #38bdf8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-align: center;
+        }
+
+        .input-group { margin-bottom: 1rem; }
+
+        label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 0.4rem;
+            color: #cbd5e1;
+        }
+
+        input[type="text"], input[type="file"] {
+            width: 100%;
+            padding: 10px 14px;
+            background: var(--input-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            color: white;
+            font-size: 0.95rem;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        input[type="file"] {
+            padding: 8px;
+            font-size: 0.8rem;
+            cursor: pointer;
+        }
+
+        input[type="text"]:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.2);
+        }
+
+        .flex-row {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 1rem;
+        }
+
+        .color-picker { flex: 1; text-align: center;}
+
+        input[type="color"] {
+            width: 100%;
+            height: 38px;
+            border: none;
+            border-radius: 8px;
+            background: transparent;
+            cursor: pointer;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            accent-color: var(--primary);
+            cursor: pointer;
+            margin-top: 5px;
+        }
+
+        .settings-block {
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            background: rgba(0,0,0,0.1);
+        }
+
+        .settings-title {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: #a78bfa;
+            margin-bottom: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        #canvas-container {
+            background: white;
+            padding: 1rem;
+            border-radius: 16px;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            min-height: 220px;
+            min-width: 220px;
+        }
+
+        .btn-download {
+            width: 100%;
+            padding: 12px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s ease;
+            text-align: center;
+        }
+
+        .btn-download:hover { background: var(--primary-hover); }
+
+        /* Адаптивність для мобільних */
+        @media (max-width: 700px) {
+            .container { flex-direction: column; }
+            .preview { border-left: none; padding-left: 0; padding-top: 2rem; border-top: 1px solid var(--border-color); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="controls">
+            <h1>QR ГЕНЕРАТОР</h1>
+            
+            <div class="input-group">
+                <label for="qr-text">Текст або посилання</label>
+                <input type="text" id="qr-text" placeholder="https://google.com" value="https://google.com" autocomplete="off">
+            </div>
+
+            <div class="settings-block">
+                <div class="settings-title">Кольори</div>
+                <div class="flex-row">
+                    <div class="color-picker">
+                        <label for="color-dots">Точки</label>
+                        <input type="color" id="color-dots" value="#000000">
+                    </div>
+                    <div class="color-picker">
+                        <label for="color-bg">Фон</label>
+                        <input type="color" id="color-bg" value="#ffffff">
+                    </div>
+                </div>
+            </div>
+
+            <div class="settings-block">
+                <div class="settings-title">Логотип (Зображення)</div>
+                <div class="input-group">
+                    <label for="logo-file">Виберіть файл (PNG/JPG)</label>
+                    <input type="file" id="logo-file" accept="image/*">
+                </div>
+                <div class="input-group">
+                    <label for="logo-size">Розмір лого: <span id="logo-size-val">0.3</span></label>
+                    <input type="range" id="logo-size" min="0.1" max="0.5" step="0.05" value="0.3">
+                </div>
+            </div>
+            
+            <div class="input-group">
+                <label for="qr-size">Розмір QR: <span id="qr-size-val">300</span> px</label>
+                <input type="range" id="qr-size" min="200" max="500" step="10" value="300">
+            </div>
+        </div>
+
+        <div class="preview">
+            <div id="canvas-container">
+                </div>
+            <button class="btn-download" onclick="downloadQR()">⬇ Завантажити PNG</button>
+        </div>
+    </div>
+
+    <script>
+        // Ініціалізація основних елементів
+        const textInput = document.getElementById('qr-text');
+        const colorDotsInput = document.getElementById('color-dots');
+        const colorBgInput = document.getElementById('color-bg');
+        const logoFileInput = document.getElementById('logo-file');
+        const logoSizeSlider = document.getElementById('logo-size');
+        const logoSizeValSpan = document.getElementById('logo-size-val');
+        const qrSizeSlider = document.getElementById('qr-size');
+        const qrSizeValSpan = document.getElementById('qr-size-val');
+
+        // Змінна для зберігання DataURL завантаженого логотипа
+        let logoDataUrl = "";
+
+        // Створення об'єкта QR-коду (поки порожнього)
+        let qrCode = new QRCodeStyling({
+            width: 300,
+            height: 300,
+            type: "svg", // SVG краще виглядає при масштабуванні в прев'ю
+            data: "https://google.com",
+            image: "",
+            dotsOptions: {
+                color: "#000000",
+                type: "rounded" // Стильний тип точок
+            },
+            backgroundOptions: {
+                color: "#ffffff",
+            },
+            imageOptions: {
+                crossOrigin: "anonymous",
+                margin: 5, // Відступ навколо лого
+                imageSize: 0.3 // Розмір лого (від 0 до 1)
+            },
+            qrOptions: {
+                errorCorrectionLevel: "H" // Обов'язково ВИСОКИЙ рівень для логотипів
+            }
+        });
+
+        // Функція для оновлення (перемальовування) QR-коду
+        function updateQR() {
+            const size = parseInt(qrSizeSlider.value);
+            const logoSize = parseFloat(logoSizeSlider.value);
+            
+            qrSizeValSpan.textContent = size;
+            logoSizeValSpan.textContent = logoSize;
+
+            // 1. Беремо текст із поля вводу
+            const rawText = textInput.value || " ";
+            
+            // 2. Конвертуємо текст у UTF-8 для правильного розпізнавання кирилиці
+            const utf8Text = Array.from(new TextEncoder().encode(rawText))
+                .map(byte => String.fromCharCode(byte))
+                .join('');
+
+            // Оновлюємо конфігурацію існуючого об'єкта
+            qrCode.update({
+                data: utf8Text, // Передаємо конвертований текст
+                width: size,
+                height: size,
+                image: logoDataUrl, // Передаємо базу зображення
+                dotsOptions: {
+                    color: colorDotsInput.value
+                },
+                backgroundOptions: {
+                    color: colorBgInput.value
+                },
+                imageOptions: {
+                    imageSize: logoSize
+                }
+            });
+        }
+
+        // Обробка завантаження файлу логотипа
+        logoFileInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) {
+                logoDataUrl = "";
+                updateQR();
+                return;
+            }
+
+            // Використовуємо FileReader для конвертації зображення в Base64 (DataURL)
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                logoDataUrl = event.target.result; // Отримуємо рядок Base64
+                updateQR(); // Оновлюємо QR вже з лого
+            };
+            reader.readAsDataURL(file);
+        });
+
+        // Додаємо динамічні слухачі на всі контролери
+        textInput.addEventListener('input', updateQR);
+        colorDotsInput.addEventListener('input', updateQR);
+        colorBgInput.addEventListener('input', updateQR);
+        logoSizeSlider.addEventListener('input', updateQR);
+        qrSizeSlider.addEventListener('input', updateQR);
+
+        // Функція завантаження
+        function downloadQR() {
+            // Бібліотека має вбудований метод завантаження
+            qrCode.download({
+                name: "qr-with-logo",
+                extension: "png"
+            });
+        }
+
+        // Перший запуск при завантаженні сторінки
+        window.onload = () => {
+            qrCode.append(document.getElementById("canvas-container")); // Монтуємо QR в DOM
+            updateQR();
+        };
+    </script>
+</body>
+</html>
