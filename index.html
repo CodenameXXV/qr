@@ -10,6 +10,8 @@
         :root {
             --primary: #8b5cf6;
             --primary-hover: #7c3aed;
+            --secondary: #3b82f6;
+            --secondary-hover: #2563eb;
             --bg-color: #0f172a;
             --card-bg: rgba(30, 41, 59, 0.7);
             --text-color: #f8fafc;
@@ -25,7 +27,7 @@
             color: var(--text-color);
             display: flex;
             justify-content: center;
-            align-items: center;
+            align-items: flex-start;
             min-height: 100vh;
             padding: 20px;
         }
@@ -38,29 +40,31 @@
             border-radius: 24px;
             padding: 2rem;
             width: 100%;
-            max-width: 800px; /* Трохи ширше для двоколонкового дизайну */
+            max-width: 900px;
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
             display: flex;
             gap: 2rem;
             flex-wrap: wrap;
+            margin-top: 2vh;
         }
 
         /* Колонка налаштувань */
         .controls {
-            flex: 1;
-            min-width: 280px;
+            flex: 1 1 350px;
         }
 
         /* Колонка попереднього перегляду */
         .preview {
-            flex: 1;
-            min-width: 280px;
+            flex: 1 1 350px;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             border-left: 1px solid var(--border-color);
             padding-left: 2rem;
+            position: sticky;
+            top: 2rem;
+            align-self: flex-start;
         }
 
         h1 {
@@ -73,7 +77,7 @@
             text-align: center;
         }
 
-        .input-group { margin-bottom: 1rem; }
+        .input-group { margin-bottom: 1rem; width: 100%; }
 
         label {
             display: block;
@@ -83,7 +87,7 @@
             color: #cbd5e1;
         }
 
-        input[type="text"], input[type="file"] {
+        input[type="text"], select, textarea {
             width: 100%;
             padding: 10px 14px;
             background: var(--input-bg);
@@ -95,24 +99,34 @@
             transition: all 0.3s ease;
         }
 
-        input[type="file"] {
-            padding: 8px;
-            font-size: 0.8rem;
+        textarea {
+            resize: vertical;
+            font-family: inherit;
+        }
+
+        select {
+            appearance: none;
             cursor: pointer;
         }
 
-        input[type="text"]:focus {
+        select option {
+            background: var(--bg-color);
+            color: white;
+        }
+
+        input[type="text"]:focus, select:focus, textarea:focus {
             border-color: var(--primary);
             box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.2);
         }
 
         .flex-row {
             display: flex;
-            gap: 10px;
+            gap: 15px;
             margin-bottom: 1rem;
+            width: 100%;
         }
 
-        .color-picker { flex: 1; text-align: center;}
+        .color-picker { flex: 1; text-align: center; }
 
         input[type="color"] {
             width: 100%;
@@ -133,7 +147,7 @@
         .settings-block {
             border: 1px solid var(--border-color);
             border-radius: 12px;
-            padding: 1rem;
+            padding: 1.2rem;
             margin-bottom: 1rem;
             background: rgba(0,0,0,0.1);
         }
@@ -142,9 +156,41 @@
             font-size: 0.9rem;
             font-weight: 700;
             color: #a78bfa;
-            margin-bottom: 0.8rem;
+            margin-bottom: 1rem;
             text-transform: uppercase;
             letter-spacing: 0.05em;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            padding-bottom: 0.5rem;
+        }
+
+        /* Drag & Drop Styles */
+        .drop-zone {
+            height: 80px;
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            font-size: 0.9rem;
+            cursor: pointer;
+            color: #cbd5e1;
+            border: 2px dashed var(--border-color);
+            border-radius: 10px;
+            background: var(--input-bg);
+            transition: all 0.3s ease;
+            position: relative;
+            margin-bottom: 10px;
+        }
+        
+        .drop-zone--over {
+            border-style: solid;
+            border-color: var(--primary);
+            background: rgba(139, 92, 246, 0.1);
+            color: white;
+        }
+
+        .drop-zone__input {
+            display: none;
         }
 
         #canvas-container {
@@ -156,14 +202,28 @@
             justify-content: center;
             align-items: center;
             margin-bottom: 1.5rem;
-            min-height: 220px;
-            min-width: 220px;
+            width: 100%;
+            max-width: 350px;
+            overflow: hidden;
         }
 
-        .btn-download {
+        canvas {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+        }
+
+        .buttons-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            width: 100%;
+            max-width: 350px;
+        }
+
+        button {
             width: 100%;
             padding: 12px;
-            background: var(--primary);
             color: white;
             border: none;
             border-radius: 10px;
@@ -174,12 +234,31 @@
             text-align: center;
         }
 
+        .btn-download { background: var(--primary); }
         .btn-download:hover { background: var(--primary-hover); }
 
+        .btn-copy { background: var(--secondary); }
+        .btn-copy:hover { background: var(--secondary-hover); }
+        
+        .btn-clear {
+            background: transparent;
+            color: #ef4444;
+            font-size: 0.8rem;
+            text-align: right;
+            padding: 0;
+            margin-top: 5px;
+            width: auto;
+        }
+
+        .btn-clear:hover { text-decoration: underline; background: transparent; }
+
         /* Адаптивність для мобільних */
-        @media (max-width: 700px) {
-            .container { flex-direction: column; }
-            .preview { border-left: none; padding-left: 0; padding-top: 2rem; border-top: 1px solid var(--border-color); }
+        @media (max-width: 768px) {
+            .container { flex-direction: column; padding: 1.5rem; gap: 1rem; }
+            .preview { border-left: none; padding-left: 0; padding-top: 1.5rem; border-top: 1px solid var(--border-color); position: static; }
+            .flex-row { flex-direction: column; gap: 10px; }
+            h1 { font-size: 1.5rem; }
+            #canvas-container { padding: 0.5rem; }
         }
     </style>
 </head>
@@ -190,12 +269,140 @@
             <h1>QR ГЕНЕРАТОР</h1>
             
             <div class="input-group">
-                <label for="qr-text">Текст або посилання</label>
-                <input type="text" id="qr-text" placeholder="https://google.com" value="https://google.com" autocomplete="off">
+                <label for="qr-type">Тип QR-коду</label>
+                <select id="qr-type" onchange="changeQrType()">
+                    <option value="text">Текст або посилання</option>
+                    <option value="wifi">Wi-Fi мережа</option>
+                    <option value="vcard">Візитка (vCard)</option>
+                    <option value="email">Email</option>
+                    <option value="sms">SMS</option>
+                    <option value="geo">Геолокація</option>
+                </select>
+            </div>
+
+            <div id="type-inputs-container">
+                <!-- Text / URL -->
+                <div id="input-text" class="type-group">
+                    <div class="input-group">
+                        <label for="qr-text">Введіть текст або посилання</label>
+                        <input type="text" id="qr-text" placeholder="https://google.com" value="https://google.com" autocomplete="off">
+                    </div>
+                </div>
+
+                <!-- Wi-Fi -->
+                <div id="input-wifi" class="type-group" style="display: none;">
+                    <div class="input-group">
+                        <label for="wifi-ssid">Назва мережі (SSID)</label>
+                        <input type="text" id="wifi-ssid" placeholder="MyWiFi" autocomplete="off">
+                    </div>
+                    <div class="input-group">
+                        <label for="wifi-password">Пароль</label>
+                        <input type="text" id="wifi-password" placeholder="********" autocomplete="off">
+                    </div>
+                    <div class="flex-row">
+                        <div class="input-group">
+                            <label for="wifi-encryption">Шифрування</label>
+                            <select id="wifi-encryption">
+                                <option value="WPA">WPA/WPA2</option>
+                                <option value="WEP">WEP</option>
+                                <option value="nopass">Без пароля</option>
+                            </select>
+                        </div>
+                        <div class="input-group" style="display: flex; align-items: center; justify-content: center; margin-top: 15px; gap: 8px;">
+                            <input type="checkbox" id="wifi-hidden" style="width: 18px; height: 18px; cursor: pointer; accent-color: var(--primary);">
+                            <label for="wifi-hidden" style="margin: 0; cursor: pointer;">Прихована</label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- vCard -->
+                <div id="input-vcard" class="type-group" style="display: none;">
+                    <div class="flex-row">
+                        <div class="input-group">
+                            <label for="vcard-fname">Ім'я</label>
+                            <input type="text" id="vcard-fname" placeholder="Іван" autocomplete="off">
+                        </div>
+                        <div class="input-group">
+                            <label for="vcard-lname">Прізвище</label>
+                            <input type="text" id="vcard-lname" placeholder="Іванов" autocomplete="off">
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <label for="vcard-phone">Телефон</label>
+                        <input type="text" id="vcard-phone" placeholder="+380..." autocomplete="off">
+                    </div>
+                    <div class="input-group">
+                        <label for="vcard-email">Email</label>
+                        <input type="text" id="vcard-email" placeholder="example@mail.com" autocomplete="off">
+                    </div>
+                    <div class="input-group">
+                        <label for="vcard-company">Компанія</label>
+                        <input type="text" id="vcard-company" placeholder="Назва компанії" autocomplete="off">
+                    </div>
+                </div>
+
+                <!-- Email -->
+                <div id="input-email" class="type-group" style="display: none;">
+                    <div class="input-group">
+                        <label for="email-to">Email отримувача</label>
+                        <input type="text" id="email-to" placeholder="example@mail.com" autocomplete="off">
+                    </div>
+                    <div class="input-group">
+                        <label for="email-subject">Тема</label>
+                        <input type="text" id="email-subject" placeholder="Тема листа" autocomplete="off">
+                    </div>
+                    <div class="input-group">
+                        <label for="email-body">Повідомлення</label>
+                        <textarea id="email-body" rows="3" placeholder="Текст листа..."></textarea>
+                    </div>
+                </div>
+
+                <!-- SMS -->
+                <div id="input-sms" class="type-group" style="display: none;">
+                    <div class="input-group">
+                        <label for="sms-phone">Номер телефону</label>
+                        <input type="text" id="sms-phone" placeholder="+380..." autocomplete="off">
+                    </div>
+                    <div class="input-group">
+                        <label for="sms-body">Повідомлення</label>
+                        <textarea id="sms-body" rows="3" placeholder="Текст SMS..."></textarea>
+                    </div>
+                </div>
+
+                <!-- Geo -->
+                <div id="input-geo" class="type-group" style="display: none;">
+                    <div class="flex-row">
+                        <div class="input-group">
+                            <label for="geo-lat">Широта (Lat)</label>
+                            <input type="text" id="geo-lat" placeholder="50.4501" autocomplete="off">
+                        </div>
+                        <div class="input-group">
+                            <label for="geo-lng">Довгота (Lng)</label>
+                            <input type="text" id="geo-lng" placeholder="30.5234" autocomplete="off">
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <div class="settings-block">
-                <div class="settings-title">Кольори</div>
+                <div class="settings-title">Дизайн та Кольори</div>
+                <div class="flex-row">
+                    <div class="input-group">
+                        <label for="corner-square-style">Кути (Рамка)</label>
+                        <select id="corner-square-style">
+                            <option value="square">Квадратні</option>
+                            <option value="extra-rounded">Заокруглені</option>
+                            <option value="dot">Крапки</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label for="corner-dot-style">Кути (Центр)</label>
+                        <select id="corner-dot-style">
+                            <option value="square">Квадратні</option>
+                            <option value="dot">Крапки</option>
+                        </select>
+                    </div>
+                </div>
                 <div class="flex-row">
                     <div class="color-picker">
                         <label for="color-dots">Точки</label>
@@ -206,144 +413,291 @@
                         <input type="color" id="color-bg" value="#ffffff">
                     </div>
                 </div>
+                <div class="input-group" style="margin-top: 10px;">
+                    <label for="qr-size">Розмір QR: <span id="qr-size-val">300</span> px</label>
+                    <input type="range" id="qr-size" min="200" max="800" step="10" value="300">
+                </div>
             </div>
 
             <div class="settings-block">
-                <div class="settings-title">Логотип (Зображення)</div>
-                <div class="input-group">
-                    <label for="logo-file">Виберіть файл (PNG/JPG)</label>
-                    <input type="file" id="logo-file" accept="image/*">
+                <div class="settings-title">Логотип</div>
+                
+                <div class="drop-zone" id="drop-zone">
+                    <span class="drop-zone__prompt">Перетягніть лого сюди або натисніть (PNG/JPG)</span>
+                    <input type="file" id="logo-file" accept="image/*" class="drop-zone__input">
                 </div>
-                <div class="input-group">
+                <div style="text-align: right; display: none;" id="clear-logo-container">
+                    <button class="btn-clear" onclick="clearLogo()">✖ Видалити логотип</button>
+                </div>
+
+                <div class="input-group" style="margin-top: 10px;">
                     <label for="logo-size">Розмір лого: <span id="logo-size-val">0.3</span></label>
                     <input type="range" id="logo-size" min="0.1" max="0.5" step="0.05" value="0.3">
                 </div>
             </div>
-            
-            <div class="input-group">
-                <label for="qr-size">Розмір QR: <span id="qr-size-val">300</span> px</label>
-                <input type="range" id="qr-size" min="200" max="500" step="10" value="300">
+
+            <div class="settings-block">
+                <div class="settings-title">Текстовий Підпис (на фото)</div>
+                <div class="input-group">
+                    <label for="qr-label">Текст під QR кодом</label>
+                    <input type="text" id="qr-label" placeholder="Наприклад: Мій сайт" autocomplete="off">
+                </div>
+                <div class="color-picker" style="width: 50%;">
+                    <label for="color-label">Колір тексту</label>
+                    <input type="color" id="color-label" value="#000000">
+                </div>
             </div>
         </div>
 
         <div class="preview">
             <div id="canvas-container">
-                </div>
-            <button class="btn-download" onclick="downloadQR()">⬇ Завантажити PNG</button>
+                <canvas id="master-canvas"></canvas>
+            </div>
+            <div class="buttons-grid">
+                <button class="btn-download" onclick="downloadQR()">⬇ Завантажити PNG</button>
+                <button class="btn-copy" onclick="copyQR()">📋 Копіювати зображення</button>
+            </div>
         </div>
     </div>
 
     <script>
-        // Ініціалізація основних елементів
-        const textInput = document.getElementById('qr-text');
-        const colorDotsInput = document.getElementById('color-dots');
-        const colorBgInput = document.getElementById('color-bg');
-        const logoFileInput = document.getElementById('logo-file');
-        const logoSizeSlider = document.getElementById('logo-size');
+        // Ініціалізація елементів
+        const inputs = [
+            'color-dots', 'color-bg', 'logo-size', 'qr-size', 
+            'corner-square-style', 'corner-dot-style', 'qr-label', 'color-label'
+        ].map(id => document.getElementById(id));
+        
+        const [
+            colorDotsInput, colorBgInput, logoSizeSlider, qrSizeSlider,
+            cornerSquareStyle, cornerDotStyle, qrLabelInput, colorLabelInput
+        ] = inputs;
+
+        function changeQrType() {
+            const type = document.getElementById('qr-type').value;
+            document.querySelectorAll('.type-group').forEach(el => el.style.display = 'none');
+            document.getElementById('input-' + type).style.display = 'block';
+            updateQR();
+        }
+
+        function getQrData() {
+            const type = document.getElementById('qr-type').value;
+            let data = "";
+
+            switch (type) {
+                case 'text':
+                    data = document.getElementById('qr-text').value;
+                    break;
+                case 'wifi':
+                    const ssid = document.getElementById('wifi-ssid').value;
+                    const pass = document.getElementById('wifi-password').value;
+                    const enc = document.getElementById('wifi-encryption').value;
+                    const hidden = document.getElementById('wifi-hidden').checked ? 'true' : 'false';
+                    data = `WIFI:T:${enc};S:${ssid};P:${pass};H:${hidden};;`;
+                    break;
+                case 'vcard':
+                    const fname = document.getElementById('vcard-fname').value;
+                    const lname = document.getElementById('vcard-lname').value;
+                    const phone = document.getElementById('vcard-phone').value;
+                    const email = document.getElementById('vcard-email').value;
+                    const company = document.getElementById('vcard-company').value;
+                    data = `BEGIN:VCARD\nVERSION:3.0\nN:${lname};${fname}\nFN:${fname} ${lname}\nORG:${company}\nTEL:${phone}\nEMAIL:${email}\nEND:VCARD`;
+                    break;
+                case 'email':
+                    const to = document.getElementById('email-to').value;
+                    const sub = document.getElementById('email-subject').value;
+                    const body = document.getElementById('email-body').value;
+                    data = `MATMSG:TO:${to};SUB:${sub};BODY:${body};;`;
+                    break;
+                case 'sms':
+                    const smsPhone = document.getElementById('sms-phone').value;
+                    const smsBody = document.getElementById('sms-body').value;
+                    data = `smsto:${smsPhone}:${smsBody}`;
+                    break;
+                case 'geo':
+                    const lat = document.getElementById('geo-lat').value;
+                    const lng = document.getElementById('geo-lng').value;
+                    data = `geo:${lat},${lng}`;
+                    break;
+            }
+            return data || " ";
+        }
+
         const logoSizeValSpan = document.getElementById('logo-size-val');
-        const qrSizeSlider = document.getElementById('qr-size');
         const qrSizeValSpan = document.getElementById('qr-size-val');
+        const dropZone = document.getElementById('drop-zone');
+        const logoFileInput = document.getElementById('logo-file');
+        const promptText = document.querySelector('.drop-zone__prompt');
+        const clearLogoBtn = document.getElementById('clear-logo-container');
+        const masterCanvas = document.getElementById('master-canvas');
+        const ctx = masterCanvas.getContext('2d');
 
-        // Змінна для зберігання DataURL завантаженого логотипа
         let logoDataUrl = "";
+        let renderTimeout;
 
-        // Створення об'єкта QR-коду (поки порожнього)
+        // Базовий об'єкт QR
         let qrCode = new QRCodeStyling({
             width: 300,
             height: 300,
-            type: "svg", // SVG краще виглядає при масштабуванні в прев'ю
+            type: "canvas", // Генеруємо у Canvas для перемальовування
             data: "https://google.com",
             image: "",
-            dotsOptions: {
-                color: "#000000",
-                type: "rounded" // Стильний тип точок
-            },
-            backgroundOptions: {
-                color: "#ffffff",
-            },
-            imageOptions: {
-                crossOrigin: "anonymous",
-                margin: 5, // Відступ навколо лого
-                imageSize: 0.3 // Розмір лого (від 0 до 1)
-            },
-            qrOptions: {
-                errorCorrectionLevel: "H" // Обов'язково ВИСОКИЙ рівень для логотипів
-            }
+            dotsOptions: { type: "rounded", color: "#000000" },
+            backgroundOptions: { color: "#ffffff" },
+            imageOptions: { crossOrigin: "anonymous", margin: 5, imageSize: 0.3 },
+            qrOptions: { errorCorrectionLevel: "H" }
         });
 
-        // Функція для оновлення (перемальовування) QR-коду
+        // Дебаунс для плавності роботи повзунків
         function updateQR() {
+            clearTimeout(renderTimeout);
+            renderTimeout = setTimeout(renderMasterCanvas, 50);
+        }
+
+        // Основна функція генерації фінального Canvas
+        async function renderMasterCanvas() {
             const size = parseInt(qrSizeSlider.value);
             const logoSize = parseFloat(logoSizeSlider.value);
             
             qrSizeValSpan.textContent = size;
             logoSizeValSpan.textContent = logoSize;
 
-            // 1. Беремо текст із поля вводу
-            const rawText = textInput.value || " ";
-            
-            // 2. Конвертуємо текст у UTF-8 для правильного розпізнавання кирилиці
+            const rawText = getQrData();
             const utf8Text = Array.from(new TextEncoder().encode(rawText))
-                .map(byte => String.fromCharCode(byte))
-                .join('');
+                .map(byte => String.fromCharCode(byte)).join('');
 
-            // Оновлюємо конфігурацію існуючого об'єкта
+            // Оновлюємо конфіг бібліотеки
             qrCode.update({
-                data: utf8Text, // Передаємо конвертований текст
+                data: utf8Text,
                 width: size,
                 height: size,
-                image: logoDataUrl, // Передаємо базу зображення
-                dotsOptions: {
-                    color: colorDotsInput.value
-                },
-                backgroundOptions: {
-                    color: colorBgInput.value
-                },
-                imageOptions: {
-                    imageSize: logoSize
-                }
+                image: logoDataUrl,
+                dotsOptions: { color: colorDotsInput.value },
+                cornersSquareOptions: { type: cornerSquareStyle.value, color: colorDotsInput.value },
+                cornersDotOptions: { type: cornerDotStyle.value, color: colorDotsInput.value },
+                backgroundOptions: { color: colorBgInput.value },
+                imageOptions: { imageSize: logoSize }
             });
+
+            // Отримуємо сире зображення QR з бібліотеки
+            const blob = await qrCode.getRawData("png");
+            const img = new Image();
+            const url = URL.createObjectURL(blob);
+
+            img.onload = () => {
+                const labelText = qrLabelInput.value.trim();
+                const bgColor = colorBgInput.value;
+                const textColor = colorLabelInput.value;
+                
+                // Розрахунок місця під текст
+                const fontSize = Math.max(16, Math.floor(size * 0.07));
+                const textPadding = labelText ? fontSize * 2.2 : 0;
+                
+                masterCanvas.width = size;
+                masterCanvas.height = size + textPadding;
+                
+                // Заливка фону
+                ctx.fillStyle = bgColor;
+                ctx.fillRect(0, 0, masterCanvas.width, masterCanvas.height);
+                
+                // Малюємо QR-код
+                ctx.drawImage(img, 0, 0, size, size);
+                
+                // Додаємо текст
+                if (labelText) {
+                    ctx.fillStyle = textColor;
+                    ctx.font = `600 ${fontSize}px Inter, sans-serif`;
+                    ctx.textAlign = "center";
+                    ctx.textBaseline = "middle";
+                    ctx.fillText(labelText, size / 2, size + (textPadding / 2));
+                }
+                
+                URL.revokeObjectURL(url);
+            };
+            img.src = url;
         }
 
-        // Обробка завантаження файлу логотипа
-        logoFileInput.addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            if (!file) {
-                logoDataUrl = "";
-                updateQR();
-                return;
-            }
+        // --- Drag & Drop логіка ---
+        dropZone.addEventListener("click", () => logoFileInput.click());
 
-            // Використовуємо FileReader для конвертації зображення в Base64 (DataURL)
-            const reader = new FileReader();
-            reader.onload = function(event) {
-                logoDataUrl = event.target.result; // Отримуємо рядок Base64
-                updateQR(); // Оновлюємо QR вже з лого
-            };
-            reader.readAsDataURL(file);
+        dropZone.addEventListener("dragover", (e) => {
+            e.preventDefault();
+            dropZone.classList.add("drop-zone--over");
         });
 
-        // Додаємо динамічні слухачі на всі контролери
-        textInput.addEventListener('input', updateQR);
-        colorDotsInput.addEventListener('input', updateQR);
-        colorBgInput.addEventListener('input', updateQR);
-        logoSizeSlider.addEventListener('input', updateQR);
-        qrSizeSlider.addEventListener('input', updateQR);
-
-        // Функція завантаження
-        function downloadQR() {
-            // Бібліотека має вбудований метод завантаження
-            qrCode.download({
-                name: "qr-with-logo",
-                extension: "png"
+        ["dragleave", "dragend"].forEach(type => {
+            dropZone.addEventListener(type, () => {
+                dropZone.classList.remove("drop-zone--over");
             });
+        });
+
+        dropZone.addEventListener("drop", (e) => {
+            e.preventDefault();
+            dropZone.classList.remove("drop-zone--over");
+            if (e.dataTransfer.files.length) {
+                handleLogo(e.dataTransfer.files[0]);
+            }
+        });
+
+        logoFileInput.addEventListener('change', function(e) {
+            if (e.target.files.length) {
+                handleLogo(e.target.files[0]);
+            }
+        });
+
+        function handleLogo(file) {
+            if (!file || !file.type.startsWith('image/')) return;
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                logoDataUrl = event.target.result;
+                promptText.textContent = file.name;
+                clearLogoBtn.style.display = "block";
+                updateQR();
+            };
+            reader.readAsDataURL(file);
         }
 
-        // Перший запуск при завантаженні сторінки
-        window.onload = () => {
-            qrCode.append(document.getElementById("canvas-container")); // Монтуємо QR в DOM
+        function clearLogo() {
+            logoDataUrl = "";
+            logoFileInput.value = "";
+            promptText.textContent = "Перетягніть лого сюди або натисніть (PNG/JPG)";
+            clearLogoBtn.style.display = "none";
             updateQR();
-        };
+        }
+
+        // --- Завантаження та Копіювання ---
+        function downloadQR() {
+            const link = document.createElement('a');
+            link.download = 'qr-code.png';
+            link.href = masterCanvas.toDataURL("image/png");
+            link.click();
+        }
+
+        async function copyQR() {
+            masterCanvas.toBlob(async (blob) => {
+                try {
+                    const item = new ClipboardItem({ "image/png": blob });
+                    await navigator.clipboard.write([item]);
+                    alert("✅ Зображення QR-коду скопійовано в буфер обміну!");
+                } catch (err) {
+                    console.error("Помилка копіювання: ", err);
+                    alert("❌ Не вдалося скопіювати. Ваш браузер може не підтримувати цю функцію.");
+                }
+            }, "image/png");
+        }
+
+        // Підключаємо слухачі подій до всіх інпутів
+        inputs.forEach(input => {
+            if(input) input.addEventListener('input', updateQR);
+        });
+
+        // Слухачі для нових специфічних інпутів
+        document.querySelectorAll('.type-group input, .type-group textarea, .type-group select, #qr-type').forEach(input => {
+            input.addEventListener('input', updateQR);
+            input.addEventListener('change', updateQR);
+        });
+
+        // Перший запуск
+        window.onload = updateQR;
     </script>
 </body>
 </html>
